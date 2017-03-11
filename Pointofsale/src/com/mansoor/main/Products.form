@@ -88,22 +88,22 @@
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="1" attributes="0">
-                              <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="txt_ChPrice" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="txt_ChCatagory" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="txt_ChQuantity" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="txt_ChMin" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="txt_ChName" alignment="1" max="32767" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
+                          <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="1" max="-2" attributes="0">
                                   <Component id="btn_SaveProdEdit" max="32767" attributes="0"/>
                                   <Component id="btn_CanProdEdit" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace pref="121" max="32767" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Component id="Cb_ChCatagory" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="txt_ChPrice" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="txt_ChQuantity" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="txt_ChMin" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="txt_ChName" alignment="1" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <Component id="jScrollPane3" min="-2" pref="426" max="-2" attributes="0"/>
@@ -129,7 +129,7 @@
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="txt_ChCatagory" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="Cb_ChCatagory" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -251,14 +251,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_ChNameActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JTextField" name="txt_ChCatagory">
-              <Properties>
-                <Property name="enabled" type="boolean" value="false"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_ChCatagoryActionPerformed"/>
-              </Events>
-            </Component>
             <Component class="javax.swing.JTextField" name="txt_ChQuantity">
               <Properties>
                 <Property name="enabled" type="boolean" value="false"/>
@@ -274,6 +266,9 @@
                 <Property name="text" type="java.lang.String" value="Save"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_SaveProdEditActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="btn_ChProduct">
               <Properties>
@@ -309,6 +304,17 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_CanProdEditActionPerformed"/>
               </Events>
+            </Component>
+            <Component class="javax.swing.JComboBox" name="Cb_ChCatagory">
+              <Properties>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                  <StringArray count="0"/>
+                </Property>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+              </AuxValues>
             </Component>
           </SubComponents>
         </Container>

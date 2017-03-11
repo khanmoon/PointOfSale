@@ -5,11 +5,16 @@
  */
 package com.mansoor.main;
 
+import dto.Catagory;
+import dto.PointofsalePersistentManager;
+import dto.ProductCriteria;
+import java.awt.HeadlessException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import org.orm.PersistentException;
+import org.orm.PersistentTransaction;
 
 /**
  *
@@ -24,7 +29,19 @@ public class Products extends javax.swing.JFrame {
         initComponents();
         updateTable();
         updateCb_Cat();
+        updateCb_ChCat();
         
+    }
+    private void updateCb_ChCat() {
+        dto.Catagory[] dtoCatagories;
+        try {
+            dtoCatagories=dto.CatagoryDAO.listCatagoryByQuery(null, null);
+            for(int i=0;i<dtoCatagories.length;i++){
+                Cb_ChCatagory.addItem(dtoCatagories[i].getCAT_Name());
+            }
+        } catch (PersistentException ex) {
+            Logger.getLogger(Products.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void updateCb_Cat() {
@@ -41,6 +58,7 @@ public class Products extends javax.swing.JFrame {
 
     private void updateTable() {
         DefaultTableModel dm=(DefaultTableModel) jTable1.getModel();
+        dm.setRowCount(0);
         dto.Product[] dtoProducts;
         
         try {
@@ -80,7 +98,6 @@ public class Products extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         txt_ChName = new javax.swing.JTextField();
-        txt_ChCatagory = new javax.swing.JTextField();
         txt_ChQuantity = new javax.swing.JTextField();
         txt_ChMin = new javax.swing.JTextField();
         btn_SaveProdEdit = new javax.swing.JButton();
@@ -89,6 +106,7 @@ public class Products extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         txt_ChPrice = new javax.swing.JTextField();
         btn_CanProdEdit = new javax.swing.JButton();
+        Cb_ChCatagory = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
         txt_AddName = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
@@ -169,19 +187,17 @@ public class Products extends javax.swing.JFrame {
             }
         });
 
-        txt_ChCatagory.setEnabled(false);
-        txt_ChCatagory.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_ChCatagoryActionPerformed(evt);
-            }
-        });
-
         txt_ChQuantity.setEnabled(false);
 
         txt_ChMin.setEnabled(false);
 
         btn_SaveProdEdit.setText("Save");
         btn_SaveProdEdit.setEnabled(false);
+        btn_SaveProdEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_SaveProdEditActionPerformed(evt);
+            }
+        });
 
         btn_ChProduct.setText("Edit");
         btn_ChProduct.addActionListener(new java.awt.event.ActionListener() {
@@ -209,6 +225,8 @@ public class Products extends javax.swing.JFrame {
             }
         });
 
+        Cb_ChCatagory.setEnabled(false);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -224,19 +242,19 @@ public class Products extends javax.swing.JFrame {
                     .addComponent(jLabel10))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txt_ChPrice, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txt_ChCatagory, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txt_ChQuantity, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txt_ChMin, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txt_ChName))
-                        .addGap(18, 18, 18))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(btn_SaveProdEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btn_CanProdEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 121, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 121, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(Cb_ChCatagory, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txt_ChPrice, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txt_ChQuantity, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txt_ChMin, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txt_ChName))
+                        .addGap(18, 18, 18)))
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 426, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -256,7 +274,7 @@ public class Products extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(txt_ChCatagory, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(Cb_ChCatagory, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -503,10 +521,6 @@ public class Products extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_AddPriceActionPerformed
 
-    private void txt_ChCatagoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_ChCatagoryActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_ChCatagoryActionPerformed
-
     private void txt_ChNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_ChNameActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_ChNameActionPerformed
@@ -530,7 +544,7 @@ public class Products extends javax.swing.JFrame {
             Logger.getLogger(Products.class.getName()).log(Level.SEVERE, null, ex);
         }
         txt_ChName.setText(p.getPROD_Name());
-        txt_ChCatagory.setText(p.getCAT_Code().getCAT_Name());
+        Cb_ChCatagory.setSelectedItem(p.getCAT_Code().getCAT_Name());
         txt_ChMin.setText(p.getPROD_MIN()+"");
         txt_ChQuantity.setText(p.getPROD_QOH()+"");
         txt_ChPrice.setText(p.getPROD_Price()+"");
@@ -545,12 +559,34 @@ public class Products extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
         JOptionPane.showConfirmDialog(null, "Are you sure to save the product?");
-        
+        saveProd();
         
         
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void saveProd() throws HeadlessException, NumberFormatException {
+        try {
+            // TODO add your handling code here:
+            dto.CatagoryCriteria criteria=new dto.CatagoryCriteria();
+            Catagory[] c= dto.CatagoryDAO.listCatagoryByCriteria(criteria);
+            dto.Product p = dto.ProductDAO.createProduct();
+            p.setPROD_MIN(Integer.parseInt(txt_AddMin.getText()));
+            p.setPROD_Name(txt_AddName.getText());
+            p.setPROD_Price(Integer.parseInt(txt_AddPrice.getText()));
+            p.setPROD_QOH(Integer.parseInt(txt_AddQuantity.getText()));
+            p.setCAT_Code(c[0]);
+            dto.ProductDAO.save(p);
+            PersistentTransaction t=PointofsalePersistentManager.instance().getSession().beginTransaction();
+            t.commit();
+            updateTable();
+        } catch (PersistentException ex) {
+            Logger.getLogger(Products.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex);
+        }catch (NumberFormatException ex){
+            JOptionPane.showMessageDialog(null, ex);
+        }
+    }
 
     private void Cb_CatagoriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Cb_CatagoriesActionPerformed
         // TODO add your handling code here:
@@ -566,28 +602,72 @@ public class Products extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(jTable1.getSelectedRow()!=-1){
             txt_ChName.setEnabled(true);
-            txt_ChCatagory.setEnabled(true);
+            Cb_ChCatagory.setEnabled(true);
             txt_ChMin.setEnabled(true);
             txt_ChPrice.setEnabled(true);
             txt_ChQuantity.setEnabled(true);
             btn_SaveProdEdit.setEnabled(true);
             btn_CanProdEdit.setEnabled(true);
+            btn_ChProduct.setEnabled(false);
+            btn_DelProduct.setEnabled(false);
+            jTable1.setEnabled(false);
         } else {
         }
     }//GEN-LAST:event_btn_ChProductActionPerformed
 
     private void btn_CanProdEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_CanProdEditActionPerformed
+        disableEdit();
+    }//GEN-LAST:event_btn_CanProdEditActionPerformed
+
+    public void disableEdit() {
         // TODO add your handling code here:
         txt_ChName.setEnabled(false);
-        txt_ChCatagory.setEnabled(false);
+        Cb_ChCatagory.setEnabled(false);
         txt_ChMin.setEnabled(false);
         txt_ChPrice.setEnabled(false);
         txt_ChQuantity.setEnabled(false);
         btn_SaveProdEdit.setEnabled(false);
         btn_CanProdEdit.setEnabled(false);
-        btn_ChProduct.setEnabled(false);
-        btn_DelProduct.setEnabled(false);
-    }//GEN-LAST:event_btn_CanProdEditActionPerformed
+        btn_ChProduct.setEnabled(true);
+        btn_DelProduct.setEnabled(true);
+        jTable1.setEnabled(true);
+    }
+
+    private void btn_SaveProdEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_SaveProdEditActionPerformed
+        // TODO add your handling code here:
+        int row = jTable1.getSelectedRow();
+        int id=(int) jTable1.getModel().getValueAt(row, 0);
+        try {
+            updateProduct(id);
+        } catch (PersistentException ex) {
+            Logger.getLogger(Products.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null, ex);
+            Logger.getLogger(Products.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        updateTable();
+        disableEdit();
+    }//GEN-LAST:event_btn_SaveProdEditActionPerformed
+
+    private void updateProduct(int id) throws PersistentException, NumberFormatException {
+        dto.CatagoryCriteria criteria=new dto.CatagoryCriteria();
+        criteria.CAT_Name.eq((String) Cb_ChCatagory.getSelectedItem());
+        Catagory[] c=dto.CatagoryDAO.listCatagoryByCriteria(criteria);
+        PersistentTransaction t= dto.PointofsalePersistentManager.instance().getSession().beginTransaction();
+        try {
+            dto.Product p=dto.ProductDAO.getProductByORMID(id);
+            p.setPROD_MIN(Integer.parseInt(txt_ChMin.getText()));
+            p.setPROD_Name(txt_ChName.getText());
+            p.setCAT_Code(c[0]);
+            p.setPROD_Price(Integer.parseInt(txt_ChPrice.getText()));
+            p.setPROD_QOH(Integer.parseInt(txt_ChQuantity.getText()));
+            dto.ProductDAO.save(p);
+            t.commit();
+        } catch (PersistentException ex) {
+            t.rollback();
+            Logger.getLogger(Products.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -626,6 +706,7 @@ public class Products extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> Cb_Catagories;
+    private javax.swing.JComboBox<String> Cb_ChCatagory;
     private javax.swing.JButton btn_CanProdEdit;
     private javax.swing.JButton btn_ChProduct;
     private javax.swing.JButton btn_DelProduct;
@@ -663,10 +744,11 @@ public class Products extends javax.swing.JFrame {
     private javax.swing.JTextField txt_AddPrice;
     private javax.swing.JTextField txt_AddQuantity;
     private javax.swing.JTextField txt_ChCatName;
-    private javax.swing.JTextField txt_ChCatagory;
     private javax.swing.JTextField txt_ChMin;
     private javax.swing.JTextField txt_ChName;
     private javax.swing.JTextField txt_ChPrice;
     private javax.swing.JTextField txt_ChQuantity;
     // End of variables declaration//GEN-END:variables
+
+    
 }
