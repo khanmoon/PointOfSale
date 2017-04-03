@@ -5,6 +5,8 @@
  */
 package com.mansoor.main;
 
+import java.awt.Toolkit;
+import java.awt.event.WindowEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.Query;
@@ -39,15 +41,18 @@ public class login extends javax.swing.JFrame {
         jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Name :");
 
-        jPasswordField1.setText("jPasswordField1");
-
         jLabel2.setText("Password :");
 
-        jTextField1.setText("jTextField1");
+        jTextField1.setToolTipText("");
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
 
         jButton1.setText("Login");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -68,13 +73,13 @@ public class login extends javax.swing.JFrame {
                             .addComponent(jLabel2)
                             .addComponent(jLabel1))
                         .addGap(30, 30, 30)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPasswordField1, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
+                            .addComponent(jTextField1)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(92, 92, 92)
                         .addComponent(jButton1)))
-                .addContainerGap(141, Short.MAX_VALUE))
+                .addContainerGap(147, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -105,22 +110,32 @@ public class login extends javax.swing.JFrame {
             
             dto.Staff s=dto.StaffDAO.createStaff();
             dto.StaffCriteria staff= new dto.StaffCriteria();
-            staff.s_Name.eq(name);
+            staff.s_UserName.eq(name);
             s=dto.StaffDAO.loadStaffByCriteria(staff);
-            System.out.println(s.getS_Password());
-            System.out.println(passwd);
+            t.commit();
+            //System.out.println(s.getS_Password());
+            //System.out.println(passwd);
             if(s==null)
             JOptionPane.showMessageDialog(null,"user not found");
             else{
                 if(s.getS_Password().equals(passwd)){
                     JOptionPane.showMessageDialog(null,"access granted");
+                    close();
+                    MainMenu mm= new MainMenu(name);
+                    mm.setVisible(true);
+                    
                 }
-            
+                else
+                    JOptionPane.showMessageDialog(null,"Incorrect Password");
             }
         } catch (PersistentException ex) {
             Logger.getLogger(login.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -156,6 +171,12 @@ public class login extends javax.swing.JFrame {
             }
         });
     }
+ public void close(){							
+											
+WindowEvent winClosingEvent = new WindowEvent(this,WindowEvent.WINDOW_CLOSING);			
+Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(winClosingEvent);		
+											
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
