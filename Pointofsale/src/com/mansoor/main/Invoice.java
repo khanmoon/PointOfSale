@@ -350,6 +350,40 @@ public class Invoice extends javax.swing.JFrame {
         calTotal(tm);
         return false;
     }
+        private boolean additem(int id) throws NumberFormatException {
+        int code = id;
+        int count = tm.getRowCount();
+        for (int i = 0; i<count; i++) {
+            int value = (int) tm.getValueAt(i,0);
+            if (Integer.parseInt(txt_code.getText())==value) {
+                int previous = (int) tm.getValueAt(i, 2);
+                int current = Integer.parseInt(txt_Qty.getText());
+                tm.setValueAt(previous+current, i, 2);
+                int Q=(int) tm.getValueAt(i, 2);
+                int pr = (int) tm.getValueAt(i,3);
+                tm.setValueAt(pr*Q, i, 4);
+                calTotal(tm);
+                return true;
+            }
+        }
+        try {
+            dto.Product p = dto.ProductDAO.getProductByORMID(code);
+            Object[] obj =new Object[5];
+            obj[0]=p.getPROD_Code();
+            obj[1]=p.getPROD_Name();
+            int Q=Integer.parseInt(txt_Qty.getText());
+            obj[2]=Q;
+            int pr=p.getPROD_Price();
+            obj[3]=pr;
+            obj[4]=Q*pr;
+            tm.addRow(obj);
+            
+        } catch (PersistentException ex) {
+            Logger.getLogger(Invoice.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        calTotal(tm);
+        return false;
+    }
 
     private void calTotal(DefaultTableModel tm) {
         int total = 0;
@@ -532,8 +566,8 @@ public class Invoice extends javax.swing.JFrame {
                         System.out.println(st);
                         
                         //Update label in ui thread
-                        txt_code.setText(st);
-                        additem();
+                       // txt_code.setText(st);
+                        additem(Integer.parseInt(st));
                     } catch (SerialPortException ex) {
                         Logger.getLogger(Invoice.class.getName())
                                 .log(Level.SEVERE, null, ex);
