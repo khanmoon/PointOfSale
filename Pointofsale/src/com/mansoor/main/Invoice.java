@@ -5,6 +5,7 @@
  */
 package com.mansoor.main;
 
+import dto.Payment_Method;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.text.DateFormat;
@@ -44,9 +45,19 @@ public class Invoice extends javax.swing.JFrame {
         person = salesperson;
         lbl_salesperson.setText(person);
         tm = (DefaultTableModel) tbl_sales.getModel();
-        
-        
-        
+        loadCbPayMethod();
+    }
+
+    private void loadCbPayMethod() {
+        Payment_Method[] paym;
+        try {
+            paym = dto.Payment_MethodDAO.listPayment_MethodByQuery(null, null);
+            for(int i=0;i<paym.length;i++){
+                cb_paymethod.addItem(paym[i].getPAY_Type());
+            }
+        } catch (PersistentException ex) {
+            Logger.getLogger(Invoice.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -80,6 +91,7 @@ public class Invoice extends javax.swing.JFrame {
         btn_back = new javax.swing.JButton();
         btn_logout = new javax.swing.JButton();
         jCheckBox1 = new javax.swing.JCheckBox();
+        cb_paymethod = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -227,12 +239,14 @@ public class Invoice extends javax.swing.JFrame {
                             .addComponent(jLabel5))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btn_decqty, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btn_proceed, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txt_code)
-                            .addComponent(btn_additem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btn_deleteitem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txt_Qty))
+                            .addComponent(cb_paymethod, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(btn_decqty, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btn_proceed, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txt_code)
+                                .addComponent(btn_additem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btn_deleteitem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txt_Qty)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 683, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
@@ -292,6 +306,8 @@ public class Invoice extends javax.swing.JFrame {
                         .addComponent(btn_deleteitem)
                         .addGap(18, 18, 18)
                         .addComponent(btn_decqty)
+                        .addGap(69, 69, 69)
+                        .addComponent(cb_paymethod, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btn_proceed, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
@@ -355,7 +371,7 @@ public class Invoice extends javax.swing.JFrame {
         int count = tm.getRowCount();
         for (int i = 0; i<count; i++) {
             int value = (int) tm.getValueAt(i,0);
-            if (Integer.parseInt(txt_code.getText())==value) {
+            if (code==value) {
                 int previous = (int) tm.getValueAt(i, 2);
                 int current = Integer.parseInt(txt_Qty.getText());
                 tm.setValueAt(previous+current, i, 2);
@@ -479,7 +495,7 @@ public class Invoice extends javax.swing.JFrame {
 
     private void txt_codeFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txt_codeFocusGained
         if(jCheckBox1.isSelected())
-        connectArduino("COM7");
+        connectArduino("COM8");
     }//GEN-LAST:event_txt_codeFocusGained
 
     private void txt_codePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_txt_codePropertyChange
@@ -612,6 +628,7 @@ public class Invoice extends javax.swing.JFrame {
     private javax.swing.JButton btn_deleteitem;
     private javax.swing.JButton btn_logout;
     private javax.swing.JButton btn_proceed;
+    private javax.swing.JComboBox<String> cb_paymethod;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
