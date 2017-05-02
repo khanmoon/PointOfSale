@@ -121,7 +121,7 @@ public class login extends javax.swing.JFrame {
                 if(s.getS_Password().equals(passwd)){
                     JOptionPane.showMessageDialog(null,"access granted");
                     close();
-                    MainMenu mm= new MainMenu(name);
+                    MainMenu mm= new MainMenu(s.getS_Name(),s.getST().getST_Id(),s.getS_Id());
                     mm.setVisible(true);
                     
                 }

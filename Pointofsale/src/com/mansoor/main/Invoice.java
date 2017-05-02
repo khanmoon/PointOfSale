@@ -7,6 +7,8 @@ package com.mansoor.main;
 
 import dto.Payment_Method;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -15,6 +17,7 @@ import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import jssc.SerialPort;
@@ -22,32 +25,46 @@ import static jssc.SerialPort.MASK_RXCHAR;
 import jssc.SerialPortEvent;
 import jssc.SerialPortException;
 import org.orm.PersistentException;
+import org.orm.PersistentTransaction;
 
 /**
  *
  * @author manso
  */
-public class Invoice extends javax.swing.JFrame {
+public class Invoice extends javax.swing.JFrame{
 
     /**
      * Creates new form Invoice
      */
     DefaultTableModel tm;
+    private int stafftype = 1;
+    private int staffid;
     String person;
     SerialPort arduinoPort = null;
-    public Invoice(String salesperson) {
+    public Invoice(String salesperson,int stafftype,int staffid) {
         initComponents();
-        DateFormat df1 = new SimpleDateFormat("dd/MM/yy");
-        Date dateobj = new Date();
-        lbl_date.setText(df1.format(dateobj));
-        DateFormat df2 = new SimpleDateFormat("HH:mm:ss");
-        lbl_time.setText(df2.format(dateobj));
+        this.staffid = staffid;
+        this.stafftype = stafftype;
+//        DateFormat df1 = new SimpleDateFormat("dd/MM/yy");
+//        Date dateobj = new Date();
+//        lbl_time.setText(df1.format(dateobj));
+//        DateFormat df2 = new SimpleDateFormat("HH:mm:ss");
+//        lbl_date.setText(df2.format(dateobj));
+        lbl_date.setText(new Date().toString());
         person = salesperson;
         lbl_salesperson.setText(person);
         tm = (DefaultTableModel) tbl_sales.getModel();
         loadCbPayMethod();
+        
+        ActionListener updateClockAction = new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            lbl_date.setText(new Date().toString()); 
+            }
+        };
+        Timer t = new Timer(1000,updateClockAction);
+        t.start();
     }
-
+    
     private void loadCbPayMethod() {
         Payment_Method[] paym;
         try {
@@ -69,9 +86,8 @@ public class Invoice extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         lbl_date = new javax.swing.JLabel();
-        lbl_time = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_sales = new javax.swing.JTable();
@@ -90,14 +106,14 @@ public class Invoice extends javax.swing.JFrame {
         jToolBar1 = new javax.swing.JToolBar();
         btn_back = new javax.swing.JButton();
         btn_logout = new javax.swing.JButton();
-        jCheckBox1 = new javax.swing.JCheckBox();
         cb_paymethod = new javax.swing.JComboBox<>();
+        btn_on = new javax.swing.JRadioButton();
+        btn_off = new javax.swing.JRadioButton();
+        btn_cancle = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jLabel1.setText("Date:");
-
-        jLabel2.setText("Time:");
+        jLabel2.setText("Date and Time:");
 
         tbl_sales.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -210,20 +226,64 @@ public class Invoice extends javax.swing.JFrame {
         });
         jToolBar1.add(btn_logout);
 
-        jCheckBox1.setText("ON Barcode");
-        jCheckBox1.setFocusable(false);
-        jCheckBox1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jCheckBox1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox1ActionPerformed(evt);
+        cb_paymethod.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " " }));
+
+        buttonGroup1.add(btn_on);
+        btn_on.setText("On Barcode");
+        btn_on.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                btn_onItemStateChanged(evt);
             }
         });
+        btn_on.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_onMouseClicked(evt);
+            }
+        });
+        btn_on.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_onActionPerformed(evt);
+            }
+        });
+
+        buttonGroup1.add(btn_off);
+        btn_off.setSelected(true);
+        btn_off.setText("Off Barcode");
+        btn_off.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                btn_offItemStateChanged(evt);
+            }
+        });
+        btn_off.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                btn_offStateChanged(evt);
+            }
+        });
+        btn_off.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_offMouseClicked(evt);
+            }
+        });
+        btn_off.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                btn_offPropertyChange(evt);
+            }
+        });
+        btn_off.addVetoableChangeListener(new java.beans.VetoableChangeListener() {
+            public void vetoableChange(java.beans.PropertyChangeEvent evt)throws java.beans.PropertyVetoException {
+                btn_offVetoableChange(evt);
+            }
+        });
+
+        btn_cancle.setText("Cancel");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -239,58 +299,59 @@ public class Invoice extends javax.swing.JFrame {
                             .addComponent(jLabel5))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btn_cancle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(cb_paymethod, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(btn_decqty, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btn_proceed, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txt_code)
-                                .addComponent(btn_additem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btn_deleteitem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txt_Qty)))
+                            .addComponent(btn_decqty, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btn_proceed, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txt_code)
+                            .addComponent(btn_additem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btn_deleteitem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txt_Qty))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 683, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel4))
-                        .addGap(42, 42, 42)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lbl_date, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
-                            .addComponent(lbl_time, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbl_salesperson, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btn_on)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_off))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel4))
+                                .addGap(42, 42, 42)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(lbl_date, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
+                                    .addComponent(lbl_salesperson, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheckBox1)
-                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jCheckBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_on)
+                    .addComponent(btn_off))
+                .addGap(7, 7, 7)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(19, 19, 19)
                         .addComponent(jLabel4))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lbl_date, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbl_time, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(30, 30, 30)
                         .addComponent(lbl_salesperson, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(11, 11, 11)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbl_total, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(52, 52, 52)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -308,13 +369,11 @@ public class Invoice extends javax.swing.JFrame {
                         .addComponent(btn_decqty)
                         .addGap(69, 69, 69)
                         .addComponent(cb_paymethod, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btn_proceed, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbl_total, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(31, 31, 31)
+                        .addComponent(btn_proceed, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(28, 28, 28)
+                        .addComponent(btn_cancle)))
+                .addGap(18, 18, Short.MAX_VALUE))
         );
 
         pack();
@@ -326,40 +385,85 @@ public class Invoice extends javax.swing.JFrame {
 
     private void btn_additemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_additemActionPerformed
 
-        if (additem()) {
+        try{
+            if (additem()) {
             return;
+            }
+        }
+        catch(NumberFormatException ex){
+            if((txt_Qty.getText().equals("")&&txt_code.getText().equals(""))==true){
+                JOptionPane.showMessageDialog(rootPane, "Kindly specify Quantity and product code");
+            }
+            else if(txt_code.getText().equals("")==true){
+                JOptionPane.showMessageDialog(rootPane, "Kindly specify Product Code");
+            }
+            else if(txt_Qty.getText().equals("")==true){
+                JOptionPane.showMessageDialog(rootPane, "Kindly specify Quantity");
+            }
+            else{
+                JOptionPane.showMessageDialog(rootPane, "Kindly specify Quantity and product code in numeric form");
+            }
+        } catch (PersistentException ex) {
+            Logger.getLogger(Invoice.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }//GEN-LAST:event_btn_additemActionPerformed
 
-    private boolean additem() throws NumberFormatException {
+    private boolean additem() throws NumberFormatException, PersistentException {
         int code = Integer.parseInt(txt_code.getText());
         int count = tm.getRowCount();
         for (int i = 0; i<count; i++) {
             int value = (int) tm.getValueAt(i,0);
-            if (Integer.parseInt(txt_code.getText())==value) {
+            if (code==value) {
                 int previous = (int) tm.getValueAt(i, 2);
                 int current = Integer.parseInt(txt_Qty.getText());
-                tm.setValueAt(previous+current, i, 2);
-                int Q=(int) tm.getValueAt(i, 2);
-                int pr = (int) tm.getValueAt(i,3);
-                tm.setValueAt(pr*Q, i, 4);
-                calTotal(tm);
+                dto.Product p = dto.ProductDAO.getProductByORMID(code);
+                int newval=previous+current;
+                if(p.getPROD_QOH()>=newval){
+                    int c=0;
+                    if((p.getPROD_QOH()-newval)<=p.getPROD_MIN()){
+                        c = JOptionPane.showConfirmDialog(rootPane, "Current Stock has fall below threshold do you want to continue");
+                    }
+                    if(c==0){
+                        tm.setValueAt(newval, i, 2);
+                        int Q=(int) tm.getValueAt(i, 2);
+                        int pr = (int) tm.getValueAt(i,3);
+                        tm.setValueAt(pr*Q, i, 4);
+                        calTotal(tm);
+                        return true;
+                    }
+                    else{
+                        return true;
+                    }
+                }
+                else{
+                JOptionPane.showMessageDialog(rootPane, "Cannot Add item not enough stock");
                 return true;
+            }
             }
         }
         try {
             dto.Product p = dto.ProductDAO.getProductByORMID(code);
-            Object[] obj =new Object[5];
-            obj[0]=p.getPROD_Code();
-            obj[1]=p.getPROD_Name();
             int Q=Integer.parseInt(txt_Qty.getText());
-            obj[2]=Q;
-            int pr=p.getPROD_Price();
-            obj[3]=pr;
-            obj[4]=Q*pr;
-            tm.addRow(obj);
-            
+            if(p.getPROD_QOH()>=Q){
+                int c = 0;
+                if((p.getPROD_QOH()-Q)<=p.getPROD_MIN()){
+                    c = JOptionPane.showConfirmDialog(rootPane, "Current Stock has fall below threshold do you want to continue");
+                }
+                if(c==0){
+                    Object[] obj =new Object[5];
+                    obj[0]=p.getPROD_Code();
+                    obj[1]=p.getPROD_Name();
+                    obj[2]=Q;
+                    int pr=p.getPROD_Price();
+                    obj[3]=pr;
+                    obj[4]=Q*pr;
+                    tm.addRow(obj);
+                }
+            }
+            else{
+                JOptionPane.showMessageDialog(rootPane, "Cannot Add item not enough stock");
+            }
         } catch (PersistentException ex) {
             Logger.getLogger(Invoice.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -415,37 +519,80 @@ public class Invoice extends javax.swing.JFrame {
 
     private void btn_proceedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_proceedActionPerformed
 
+        try {
+            if(tm.getRowCount()==0){
+                JOptionPane.showMessageDialog(rootPane, "No item Selected");
+                return;
+            }
+            if(cb_paymethod.getSelectedIndex() == 0){
+                JOptionPane.showMessageDialog(rootPane, "Please Enter Payment Method");
+                return;
+            }
+            if(JOptionPane.showConfirmDialog(rootPane, "Are you sure you want to proceed")==0){
+                int d = Integer.parseInt(JOptionPane.showInputDialog("Enter received Amount"));
+                JOptionPane.showMessageDialog(rootPane,"Change: "+(d-Integer.parseInt(lbl_total.getText())));
+                proceed();
+                txt_code.setText("");
+                cb_paymethod.setSelectedIndex(0);
+                tm.setRowCount(0);
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(rootPane, "Please Enter Amount in Numeric Form!");
+            Logger.getLogger(Invoice.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (PersistentException ex) {
+            Logger.getLogger(Invoice.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btn_proceedActionPerformed
+
+    private void proceed() throws NumberFormatException, PersistentException {
         int count = tm.getRowCount();
-        dto.Invoice_Product ip = dto.Invoice_ProductDAO.createInvoice_Product();
+        
         dto.Invoice in=dto.InvoiceDAO.createInvoice();
+        dto.Payment pay = dto.PaymentDAO.createPayment();
+        dto.Payment_Method paym = dto.Payment_MethodDAO.getPayment_MethodByORMID(cb_paymethod.getSelectedIndex());
+        
+        pay.setINV_Number(in);
+        pay.setPAY(paym);
+        pay.setPAYMENT_Amount(Integer.parseInt(lbl_total.getText()));
         in.setCUST(null);
-        in.setCUST_Name("Mansoor");
+        in.setCUST_Name("Unknown");
         in.setINV_Subtotal(0);
         in.setINV_Tax(0);
         in.setINV_Date(new Date());
         in.setINV_Total(Integer.parseInt(lbl_total.getText()));
+        
         try {
-            in.setStaffS(dto.StaffDAO.getStaffByORMID(1));
+            in.setStaffS(dto.StaffDAO.getStaffByORMID(staffid));
             dto.InvoiceDAO.save(in);
         } catch (PersistentException ex) {
             Logger.getLogger(Invoice.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
         for(int i=0;i<count;i++){
+            dto.Invoice_Product ip = dto.Invoice_ProductDAO.createInvoice_Product();
             ip.setINV_Number(in);
             int value = (int) tm.getValueAt(i, 0);
             int qty = (int)tm.getValueAt(i, 2);
             dto.Product p;
+            PersistentTransaction t = null;
             try {
+                t = dto.PointofsalePersistentManager.instance().getSession().beginTransaction();
                 p = dto.ProductDAO.getProductByORMID(value);
+                int cstock = p.getPROD_QOH();
+                dto.ProductDAO.save(p);
                 ip.setProductPROD_Code(p);
                 ip.setQuantity(qty);
                 dto.Invoice_ProductDAO.save(ip);
+                t.commit();
             } catch (PersistentException ex) {
+                t.rollback();
                 Logger.getLogger(Invoice.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex){
+                t.rollback();
             }
             
         }
-    }//GEN-LAST:event_btn_proceedActionPerformed
+    }
 
     private void btn_deleteitemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteitemActionPerformed
         int v = tbl_sales.getSelectedRow();
@@ -481,7 +628,7 @@ public class Invoice extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_decqtyActionPerformed
 
     private void btn_backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_backActionPerformed
-        MainMenu m = new MainMenu(person);
+        MainMenu m = new MainMenu(person,stafftype,staffid);
         m.setVisible(true);
         close();
        
@@ -494,8 +641,8 @@ public class Invoice extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_logoutActionPerformed
 
     private void txt_codeFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txt_codeFocusGained
-        if(jCheckBox1.isSelected())
-        connectArduino("COM8");
+//        if(jCheckBox1.isSelected())
+//        connectArduino("COM8");
     }//GEN-LAST:event_txt_codeFocusGained
 
     private void txt_codePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_txt_codePropertyChange
@@ -511,13 +658,47 @@ public class Invoice extends javax.swing.JFrame {
     }//GEN-LAST:event_txt_codeCaretUpdate
 
     private void txt_codeFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txt_codeFocusLost
-        if(jCheckBox1.isSelected())
-        disconnectArduino();
+//        if(jCheckBox1.isSelected())
+//        disconnectArduino();
     }//GEN-LAST:event_txt_codeFocusLost
 
-    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+    private void btn_onActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_onActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox1ActionPerformed
+    }//GEN-LAST:event_btn_onActionPerformed
+
+    private void btn_offPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_btn_offPropertyChange
+        System.out.println("com.mansoor.main.Invoice.btn_offPropertyChange()");
+    }//GEN-LAST:event_btn_offPropertyChange
+
+    private void btn_offVetoableChange(java.beans.PropertyChangeEvent evt)throws java.beans.PropertyVetoException {//GEN-FIRST:event_btn_offVetoableChange
+        System.out.println("com.mansoor.main.Invoice.btn_offVetoableChange()");
+    }//GEN-LAST:event_btn_offVetoableChange
+
+    private void btn_offMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_offMouseClicked
+//        if(btn_off.isSelected()){
+//        disconnectArduino();
+//            System.out.println(btn_off.isSelected());
+//        }
+    }//GEN-LAST:event_btn_offMouseClicked
+
+    private void btn_onMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_onMouseClicked
+//        if(btn_on.isSelected()==true)
+//        connectArduino("COM8");
+    }//GEN-LAST:event_btn_onMouseClicked
+
+    private void btn_offStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_btn_offStateChanged
+//        System.out.println("com.mansoor.main.Invoice.btn_offStateChanged()");
+    }//GEN-LAST:event_btn_offStateChanged
+
+    private void btn_offItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_btn_offItemStateChanged
+        if(btn_off.isSelected())
+        disconnectArduino();
+    }//GEN-LAST:event_btn_offItemStateChanged
+
+    private void btn_onItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_btn_onItemStateChanged
+        if(btn_on.isSelected()==true)
+        connectArduino("COM8");
+    }//GEN-LAST:event_btn_onItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -549,7 +730,7 @@ public class Invoice extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Invoice("Mansoor").setVisible(true);
+                new Invoice("Mansoor" ,1,1).setVisible(true);
             }
         });
     }
@@ -587,6 +768,8 @@ public class Invoice extends javax.swing.JFrame {
                     } catch (SerialPortException ex) {
                         Logger.getLogger(Invoice.class.getName())
                                 .log(Level.SEVERE, null, ex);
+                        JOptionPane.showMessageDialog(rootPane, "kindly connect Barcode scanner");
+                        btn_off.setSelected(true);
                     }
                     
                 }
@@ -598,6 +781,8 @@ public class Invoice extends javax.swing.JFrame {
             Logger.getLogger(Invoice.class.getName())
                     .log(Level.SEVERE, null, ex);
             System.out.println("SerialPortException: " + ex.toString());
+            JOptionPane.showMessageDialog(rootPane, "kindly connect Barcode scanner");
+           btn_off.setSelected(true);
         }
 
         return success;
@@ -620,17 +805,25 @@ public class Invoice extends javax.swing.JFrame {
             }
         }
     }
+    @Override
+    public void dispose() {
+        System.out.println("Closed");
+        disconnectArduino();
+        super.dispose();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_additem;
     private javax.swing.JButton btn_back;
+    private javax.swing.JButton btn_cancle;
     private javax.swing.JButton btn_decqty;
     private javax.swing.JButton btn_deleteitem;
     private javax.swing.JButton btn_logout;
+    private javax.swing.JRadioButton btn_off;
+    private javax.swing.JRadioButton btn_on;
     private javax.swing.JButton btn_proceed;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> cb_paymethod;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -640,7 +833,6 @@ public class Invoice extends javax.swing.JFrame {
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JLabel lbl_date;
     private javax.swing.JLabel lbl_salesperson;
-    private javax.swing.JLabel lbl_time;
     private javax.swing.JLabel lbl_total;
     private javax.swing.JTable tbl_sales;
     private javax.swing.JTextField txt_Qty;

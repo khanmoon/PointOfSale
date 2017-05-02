@@ -17,9 +17,22 @@ public class MainMenu extends javax.swing.JFrame {
     /**
      * Creates new form MainMenu
      */
-    public MainMenu(String m) {
+    private int staffid;
+    private int stafftype;
+    private String salesperson;
+    public MainMenu(String m,int stafftype,int staffid) {
         initComponents();
-        jLabel3.setText(m);
+        salesperson = m;
+        jLabel3.setText(salesperson);
+        this.staffid = staffid;
+        this.stafftype = stafftype;
+        if(stafftype==1){
+            btn_invoices.setEnabled(false);
+        }
+        if(stafftype==2){
+            btn_users.setEnabled(false);
+            btn_products.setEnabled(false);
+        }
     }
 
     /**
@@ -36,6 +49,7 @@ public class MainMenu extends javax.swing.JFrame {
         btn_products = new javax.swing.JButton();
         btn_invoices = new javax.swing.JButton();
         btn_users = new javax.swing.JButton();
+        btn_logout = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -53,8 +67,25 @@ public class MainMenu extends javax.swing.JFrame {
         });
 
         btn_invoices.setText("Invoices");
+        btn_invoices.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_invoicesActionPerformed(evt);
+            }
+        });
 
         btn_users.setText("Users");
+        btn_users.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_usersActionPerformed(evt);
+            }
+        });
+
+        btn_logout.setText("Logout");
+        btn_logout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_logoutActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -68,7 +99,9 @@ public class MainMenu extends javax.swing.JFrame {
                     .addComponent(btn_invoices)
                     .addComponent(btn_products)
                     .addComponent(jLabel3)
-                    .addComponent(btn_users, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(btn_logout, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btn_users, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)))
                 .addContainerGap(187, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -84,7 +117,9 @@ public class MainMenu extends javax.swing.JFrame {
                 .addComponent(btn_invoices)
                 .addGap(18, 18, 18)
                 .addComponent(btn_users)
-                .addContainerGap(108, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(btn_logout)
+                .addContainerGap(65, Short.MAX_VALUE))
         );
 
         pack();
@@ -92,10 +127,28 @@ public class MainMenu extends javax.swing.JFrame {
 
     private void btn_productsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_productsActionPerformed
         // TODO add your handling code here:
-        Products p = new Products();
+        Products p = new Products(salesperson,stafftype,staffid);
         close();
         p.setVisible(true);
     }//GEN-LAST:event_btn_productsActionPerformed
+
+    private void btn_usersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_usersActionPerformed
+        Users u = new Users(salesperson,stafftype,staffid);
+        close();
+        u.setVisible(true);
+    }//GEN-LAST:event_btn_usersActionPerformed
+
+    private void btn_invoicesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_invoicesActionPerformed
+        Invoice i = new Invoice(salesperson,stafftype,staffid);
+        close();
+        i.setVisible(true);
+    }//GEN-LAST:event_btn_invoicesActionPerformed
+
+    private void btn_logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_logoutActionPerformed
+        login log = new login();
+        log.setVisible(true);
+        close();
+    }//GEN-LAST:event_btn_logoutActionPerformed
 
     /**
      * @param args the command line arguments
@@ -127,7 +180,7 @@ public class MainMenu extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainMenu("ms").setVisible(true);
+                new MainMenu("ms",0,0).setVisible(true);
             }
         });
     }
@@ -139,6 +192,7 @@ Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(winClosingEvent);
 }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_invoices;
+    private javax.swing.JButton btn_logout;
     private javax.swing.JButton btn_products;
     private javax.swing.JButton btn_users;
     private javax.swing.JLabel jLabel1;

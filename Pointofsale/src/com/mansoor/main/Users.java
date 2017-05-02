@@ -12,7 +12,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import org.hibernate.exception.ConstraintViolationException;
 import org.orm.PersistentException;
+import org.orm.PersistentTransaction;
 
 /**
  *
@@ -21,14 +23,18 @@ import org.orm.PersistentException;
 public class Users extends javax.swing.JFrame {
 
     private String person;
+    private int staffid;
+    private int stafftype;
     /**
      * Creates new form Users
      */
-    public Users(String person) {
+    public Users(String person,int stafftype,int staffid) {
             initComponents();
             updateTable();
         cbupdate();
         this.person = person;
+        this.staffid = staffid;
+        this.stafftype = stafftype;
     }
 
     private void cbupdate() {
@@ -130,6 +136,11 @@ public class Users extends javax.swing.JFrame {
         });
 
         btn_revert.setText("Revert");
+        btn_revert.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_revertActionPerformed(evt);
+            }
+        });
 
         btn_deleteuser.setText("Delete");
         btn_deleteuser.addActionListener(new java.awt.event.ActionListener() {
@@ -268,8 +279,20 @@ public class Users extends javax.swing.JFrame {
             try {
               int v =  JOptionPane.showConfirmDialog(this, "Do you really want to Delete user?");
                 if(v==0){
+                    if(id==staffid){
+                        int r=JOptionPane.showConfirmDialog(this, "It is your account you will be log out after deleting, Do you want to continue?");
+                        if (r==0){
+                            dto.Staff s = dto.StaffDAO.getStaffByORMID(id);
+                            dto.StaffDAO.deleteAndDissociate(s);
+                            login m = new login();
+                            m.setVisible(true);
+                            close();
+                        }else{
+                            return;
+                        } 
+                    }
                 dto.Staff s = dto.StaffDAO.getStaffByORMID(id);
-                dto.StaffDAO.delete(s);
+                dto.StaffDAO.deleteAndDissociate(s);
                 updateTable();
                 }
             } catch (PersistentException ex) {
@@ -290,17 +313,33 @@ public class Users extends javax.swing.JFrame {
     private void btn_adduserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_adduserActionPerformed
         int v = JOptionPane.showConfirmDialog(this, "Are you sure you want to add user");
         if(v==0){
+            if(txt_name.getText().equals("") || txt_passwd.getText().equals("") || txt_username.getText().equals("")){
+                JOptionPane.showMessageDialog(rootPane, "Please Fill out the name, username, password");
+                return;
+            }
             dto.Staff s = dto.StaffDAO.createStaff();
             s.setS_Name(txt_name.getText());
             s.setS_Password(txt_passwd.getText());
             s.setS_UserName(txt_username.getText());
+            PersistentTransaction t = null;
             try {
+                t = dto.PointofsalePersistentManager.instance().getSession().beginTransaction();
                 dto.Staff_TypeCriteria stafftype = new Staff_TypeCriteria();
                 stafftype.ST_Type.eq((String) cb_type.getSelectedItem());
                 s.setST(dto.Staff_TypeDAO.loadStaff_TypeByCriteria(stafftype));
                 dto.StaffDAO.save(s);
                 updateTable();
-            } catch (PersistentException ex) {
+                t.commit();
+                txt_name.setText("");
+            txt_passwd.setText("");
+            txt_username.setText("");
+            }catch (PersistentException ex) {
+                try {
+                    JOptionPane.showMessageDialog(rootPane, "Username Must be Unique");
+                    t.rollback();
+                } catch (PersistentException ex1) {
+                    Logger.getLogger(Users.class.getName()).log(Level.SEVERE, null, ex1);
+                }
                 Logger.getLogger(Users.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -315,10 +354,16 @@ public class Users extends javax.swing.JFrame {
 
     private void btn_backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_backActionPerformed
 
-        MainMenu m = new MainMenu(person);
+        MainMenu m = new MainMenu(person,stafftype,staffid);
         m.setVisible(true);
         close();
     }//GEN-LAST:event_btn_backActionPerformed
+
+    private void btn_revertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_revertActionPerformed
+        txt_name.setText("");
+        txt_passwd.setText("");
+        txt_username.setText("");
+    }//GEN-LAST:event_btn_revertActionPerformed
 
     /**
      * @param args the command line arguments
@@ -350,7 +395,7 @@ public class Users extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Users("").setVisible(true);
+                new Users("",1,1).setVisible(true);
             }
         });
     }

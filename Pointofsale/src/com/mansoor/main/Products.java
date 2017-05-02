@@ -9,6 +9,8 @@ import dto.Catagory;
 import dto.PointofsalePersistentManager;
 import dto.ProductCriteria;
 import java.awt.HeadlessException;
+import java.awt.Toolkit;
+import java.awt.event.WindowEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -20,12 +22,19 @@ import org.orm.PersistentTransaction;
  *
  * @author manso
  */
+
 public class Products extends javax.swing.JFrame {
+    private String person;
+    private int staffid;
+    private int stafftype;
 
     /**
      * Creates new form Products
      */
-    public Products() {
+    public Products(String s,int stafftype,int staffid) {
+        person = s;
+        this.staffid = staffid;
+        this.stafftype = stafftype;
         initComponents();
         updateTable();
         updateCb_Cat();
@@ -47,6 +56,8 @@ public class Products extends javax.swing.JFrame {
 
     private void updateCb_Cat() {
         dto.Catagory[] dtoCatagories;
+        Cb_Catagories.removeAllItems();
+        Cb_ChCatagory.removeAllItems();
         try {
             dtoCatagories=dto.CatagoryDAO.listCatagoryByQuery(null, null);
             for(int i=0;i<dtoCatagories.length;i++){
@@ -108,8 +119,6 @@ public class Products extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -155,21 +164,11 @@ public class Products extends javax.swing.JFrame {
         txt_CatName = new javax.swing.JTextField();
         btn_AddCat = new javax.swing.JButton();
         btn_RevCat = new javax.swing.JButton();
+        jToolBar1 = new javax.swing.JToolBar();
+        btn_back = new javax.swing.JButton();
+        btn_logout = new javax.swing.JButton();
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane2.setViewportView(jTable2);
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel1.setEnabled(false);
 
@@ -256,6 +255,11 @@ public class Products extends javax.swing.JFrame {
         });
 
         Cb_ChCatagory.setEnabled(false);
+        Cb_ChCatagory.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Cb_ChCatagoryActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -328,7 +332,7 @@ public class Products extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_ChProduct)
                     .addComponent(btn_DelProduct))
-                .addGap(0, 35, Short.MAX_VALUE))
+                .addGap(0, 27, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Products list", jPanel1);
@@ -369,6 +373,7 @@ public class Products extends javax.swing.JFrame {
             }
         });
 
+        Cb_Catagories.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " " }));
         Cb_Catagories.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 Cb_CatagoriesActionPerformed(evt);
@@ -433,7 +438,7 @@ public class Products extends javax.swing.JFrame {
                 .addComponent(jButton4)
                 .addGap(18, 18, 18)
                 .addComponent(jButton5)
-                .addContainerGap(157, Short.MAX_VALUE))
+                .addContainerGap(149, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Add Product", jPanel2);
@@ -545,7 +550,7 @@ public class Products extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton6)
                     .addComponent(btn_DelCat))
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Catagories List", jPanel3);
@@ -592,20 +597,50 @@ public class Products extends javax.swing.JFrame {
                 .addComponent(btn_AddCat)
                 .addGap(18, 18, 18)
                 .addComponent(btn_RevCat)
-                .addContainerGap(338, Short.MAX_VALUE))
+                .addContainerGap(330, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Add Catagory", jPanel4);
+
+        jToolBar1.setRollover(true);
+
+        btn_back.setText("Back");
+        btn_back.setFocusable(false);
+        btn_back.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btn_back.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btn_back.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_backActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btn_back);
+
+        btn_logout.setText("Logout");
+        btn_logout.setFocusable(false);
+        btn_logout.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btn_logout.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btn_logout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_logoutActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btn_logout);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(jTabbedPane1)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 531, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -654,16 +689,35 @@ public class Products extends javax.swing.JFrame {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         JOptionPane.showConfirmDialog(null, "Are you sure to save the product?");
-        saveProd();
-        
-        
+        try {
+            saveProd();
+        } catch (HeadlessException ex) {
+            Logger.getLogger(Products.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NumberFormatException ex) {
+            Logger.getLogger(Products.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (PersistentException ex) {
+            Logger.getLogger(Products.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        txt_AddName.setText("");
+        txt_AddQuantity.setText("");
+        txt_AddMin.setText("");
+        txt_AddPrice.setText("");
+        Cb_Catagories.setSelectedIndex(0);
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    private void saveProd() throws HeadlessException, NumberFormatException {
+    private void saveProd() throws HeadlessException, NumberFormatException, PersistentException {
+        PersistentTransaction t = null;
         try {
+            t = dto.PointofsalePersistentManager.instance().getSession().beginTransaction();
             // TODO add your handling code here:
+            if(txt_AddName.getText().equals("") || txt_AddQuantity.getText().equals("") || txt_AddMin.getText().equals("") || txt_AddPrice.getText().equals("")){
+                JOptionPane.showMessageDialog(rootPane, "Kindly fill the name, price, quantity, min threshold");
+                return;
+            }
+                
             dto.CatagoryCriteria criteria=new dto.CatagoryCriteria();
-            Catagory[] c= dto.CatagoryDAO.listCatagoryByCriteria(criteria);
+            criteria.CAT_Name.eq((String) Cb_Catagories.getSelectedItem());
+            Catagory[] c=dto.CatagoryDAO.listCatagoryByCriteria(criteria);
             dto.Product p = dto.ProductDAO.createProduct();
             p.setPROD_MIN(Integer.parseInt(txt_AddMin.getText()));
             p.setPROD_Name(txt_AddName.getText());
@@ -671,14 +725,14 @@ public class Products extends javax.swing.JFrame {
             p.setPROD_QOH(Integer.parseInt(txt_AddQuantity.getText()));
             p.setCAT_Code(c[0]);
             dto.ProductDAO.save(p);
-            PersistentTransaction t=PointofsalePersistentManager.instance().getSession().beginTransaction();
-            t.commit();
             updateTable();
+            t.commit();
         } catch (PersistentException ex) {
+            t.rollback();
             Logger.getLogger(Products.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex);
         }catch (NumberFormatException ex){
-            JOptionPane.showMessageDialog(null, ex);
+            JOptionPane.showMessageDialog(null, "Kindly Enter the Price, Quantity, Min Threashold in numeric Form");
         }
     }
 
@@ -790,6 +844,8 @@ public class Products extends javax.swing.JFrame {
             Logger.getLogger(Products.class.getName()).log(Level.SEVERE, null, ex);
         }
         updateChTable();
+        updateCb_Cat();
+        updateTable();
         disCat();
     }
     }//GEN-LAST:event_btn_SaveCatActionPerformed
@@ -800,6 +856,10 @@ public class Products extends javax.swing.JFrame {
         c.setCAT_Name(txt_CatName.getText());
         try {
            // PersistentTransaction t= dto.PointofsalePersistentManager.instance().getSession().beginTransaction();
+           if(txt_CatName.getText().equals("")){
+               JOptionPane.showMessageDialog(rootPane, "Kindly fill name of catagory");
+               return;
+           }
             dto.CatagoryDAO.save(c);
            // t.commit();
         } catch (PersistentException ex) {
@@ -837,13 +897,30 @@ public class Products extends javax.swing.JFrame {
             int id=(int) jTable1.getModel().getValueAt(row, 0);
             try {
                 dto.Product p = dto.ProductDAO.getProductByORMID(id);
-                dto.ProductDAO.delete(p);
+                dto.ProductDAO.deleteAndDissociate(p);
             } catch (PersistentException ex) {
                 Logger.getLogger(Products.class.getName()).log(Level.SEVERE, null, ex);
             }
             updateTable();
         }
     }//GEN-LAST:event_btn_DelProductActionPerformed
+
+    private void btn_backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_backActionPerformed
+       MainMenu m = new MainMenu(person,stafftype,staffid);
+       m.setVisible(true);
+       close();
+       
+    }//GEN-LAST:event_btn_backActionPerformed
+
+    private void btn_logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_logoutActionPerformed
+        login m = new login();
+        m.setVisible(true);
+        close();
+    }//GEN-LAST:event_btn_logoutActionPerformed
+
+    private void Cb_ChCatagoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Cb_ChCatagoryActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_Cb_ChCatagoryActionPerformed
 
     private void updateProduct(int id) throws PersistentException, NumberFormatException {
         dto.CatagoryCriteria criteria=new dto.CatagoryCriteria();
@@ -895,10 +972,16 @@ public class Products extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Products().setVisible(true);
+                new Products("",1,1).setVisible(true);
             }
         });
     }
+     public void close(){							
+											
+WindowEvent winClosingEvent = new WindowEvent(this,WindowEvent.WINDOW_CLOSING);			
+Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(winClosingEvent);		
+											
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> Cb_Catagories;
@@ -912,6 +995,8 @@ public class Products extends javax.swing.JFrame {
     private javax.swing.JButton btn_RevCat;
     private javax.swing.JButton btn_SaveCat;
     private javax.swing.JButton btn_SaveProdEdit;
+    private javax.swing.JButton btn_back;
+    private javax.swing.JButton btn_logout;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
@@ -932,12 +1017,11 @@ public class Products extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
+    private javax.swing.JToolBar jToolBar1;
     private javax.swing.JTextField txt_AddMin;
     private javax.swing.JTextField txt_AddName;
     private javax.swing.JTextField txt_AddPrice;
